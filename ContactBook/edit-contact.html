@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+
+    <body onlook="getContact()">
+        <div id="avatarImage"></div>
+        <form id="editForm">
+            <label for ="firstname">First name</label>
+            <input type ="text" name="firstname" id="firstname" readonly><br/>
+            <label for ="lastname">Last name</label>
+            <input type ="text" name="lastname" id="lastname" readonly><br/>
+            <label for ="mobile">Mobile</label>
+            <input type ="text" name="mobile" id="mobile" readonly><br/>
+            <label for ="email">Email</label>
+            <input type ="text" name="email" id="email" readonly><br/>
+            <label for ="avatar" id="avatarLabel" hidden>Change profile image</label></br>
+            <input type ="file" name="avatar" id="avatar" hidden><br/>
+            <br/>
+            <button type ="submit" id="submitForm" hidden>Submit</button>
+        </form>
+        <br/><br/>
+         <button id="homeLink" type="button">Home</button>
+         <button id="editContact" type="button">Edit</button>
+        <button id="deleteContact" type="button">Delete</button>
+
+        <script src="config.js"></script>
+        <script>
+            var id =getId();
+            document.getElementById("homelink").addEventListener('click', homeLink);
+            document.getElementById("editContact").addEventListener('click', editContact);
+            console.log("The id is:" + id);
+
+            function getId(){
+                var url= window.location.href;
+                var pos= url.search("=");
+                var id= url.slice(pos + 1);
+                return id;
+            }
+
+            function getContact(){
+                fetch(rootPath + 'controller/get-contacts/? id='+ id)
+                .then(function(response){
+                    return response.json();
+                })
+                .then(fuction(data){
+                    displayOutput(data);
+                
+                })
+               
+                
+
+                function homeLink(){
+                    window.open("index.html", "_self");
+
+                }
+                
+                function displayOutput(data){
+                    avatarImage = 
+                    <img src="$(rootPath)/controller/uploads/$(data[0].avatar)" width="200" />
+
+                    document.getElementById("avatarImage").innerHTML = avatarImage;
+                     document.getElementById("firstname").value = data[0].firstname;
+                     document.getElementById("lastname").value = data[0].lastname;
+                     document.getElementById("mobile").value = data[0].mobile;
+                     document.getElementById("email").value = data[0].email;
+
+                 
+                }
+            
+                function editContact(){
+                    document.getElementById("firstname").readyonly = false;
+                    document.getElementById("lastname").readyonly = false;
+                    document.getElementById("mobile").readyonly = false;
+                    document.getElementById("email").readyonly = false;
+                    document.getElementById("avatar").hidden = false;
+                    document.getElementById("submitForm").hidden = false;
+                }
+                
+                function submitForm(e){
+                    e.preventDefault();
+
+                    const form =new FormData(document.querySelector("#editForm"));
+                    form.append('apiKey', apiKey);
+                    form.append('id', id);
+                }
+        </script>
+
+    </body>
+</html>
